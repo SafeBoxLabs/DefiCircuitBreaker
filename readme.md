@@ -25,11 +25,11 @@ To use the CircuitBreaker smart contract, you will need to interact with the con
 
 Here is a brief overview of the primary functions:
 
-transferTo(address recipient, uint256 amount): Transfers the specified amount of tokens to the recipient. If the amount is greater than or equal to the minimum lock amount, the funds will be locked and released over time.
+`transferTo(address recipient, uint256 amount)`: Transfers the specified amount of tokens to the recipient. If the amount is greater than or equal to the minimum lock amount, the funds will be locked and released over time.
 
-unlockFor(address recipient, uint256 lockTimestamp): Unlocks the funds for the specified recipient according to the release curve. This function can only be called by the recipient.
+`unlockFor(address recipient, uint256 lockTimestamp)`: Unlocks the funds for the specified recipient according to the release curve. This function can only be called by the recipient.
 
-getWithdrawableAmount(address recipient, uint256 lockTimestamp): Returns the amount of funds that can be withdrawn by the recipient at the current time.
+`getWithdrawableAmount(address recipient, uint256 lockTimestamp)` : Returns the amount of funds that can be withdrawn by the recipient at the current time.
 
 ## Repository Structure
 
