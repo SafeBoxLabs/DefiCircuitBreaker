@@ -18,7 +18,7 @@ Both functions have their merits depending on the specific requirements of a DeF
 - The power function allows for a faster or slower release of funds, depending on the value of `n`.
 - The logistic function provides a smoother and more controlled release of funds, with an S-shaped curve that starts slow, accelerates as it approaches the midpoint, and slows down again as it approaches the end of the release period.
 
-We chose the logistic function for our CircuitBreaker implementation because it provides a more predictable release schedule and is more suitable for general scenarios. However, protocols can choose to implement the power function or any other suitable function based on their requirements.
+Currently logistic function for our CircuitBreaker is implementated because it provides a more predictable release schedule and is more suitable for general scenarios. However, we will be building the power function CircuitBreaker too.
 
 ## Integration
 To use the CircuitBreaker smart contract, you will need to interact with the contract's functions, such as locking and releasing funds. You can do this using the ABI and the contract's address.
