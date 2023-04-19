@@ -56,4 +56,28 @@ contract CircuitBreakerLogisticTest is Test {
         assertEq(withdrawableAmount1, amount);
     }
 
+    function testEarlyUnlock() public {
+        uint256 amount = 1000e18;
+        IERC20(circuitBreakerLogistic.underlyingToken()).transfer(address(circuitBreakerLogistic), amount);
+
+        vm.recordLogs();
+        circuitBreakerLogistic.transferTo(address(this), amount);
+        Vm.Log[] memory entries = vm.getRecordedLogs();
+
+        assertEq(entries.length, 1);
+        assertEq(entries[0].topics[0], keccak256("TransferLocked(address,uint256,uint256)"));
+        assertEq(uint256(entries[0].topics[1]), uint256(uint160(address(this))));
+
+        (uint256 amountLocked, uint256 lockTimestamp) = abi.decode(entries[0].data, (uint256, uint256));
+        assertEq(amountLocked, amount);
+        assertEq(lockTimestamp, uint256(block.timestamp));
+
+        // Warp to just after the unlock delay, but before any funds are withdrawable
+        vm.warp(block.timestamp + 24 hours + 1 seconds);
+        uint256 withdrawableAmountEarly = circuitBreakerLogistic.getWithdrawableAmount(address(this), lockTimestamp);
+        assertEq(withdrawableAmountEarly, 0);
+        vm.expectRevert("no withdrawable funds");
+        circuitBreakerLogistic.unlockFor(address(this), lockTimestamp);
+    }
+
 }
