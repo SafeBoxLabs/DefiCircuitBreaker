@@ -21,19 +21,19 @@ Both functions have their merits depending on the specific requirements of a DeF
 We chose the logistic function for our CircuitBreaker implementation because it provides a more predictable release schedule and is more suitable for general scenarios. However, protocols can choose to implement the power function or any other suitable function based on their requirements.
 
 ## Integration
+To use the CircuitBreaker smart contract, you will need to interact with the contract's functions, such as locking and releasing funds. You can do this using the ABI and the contract's address.
 
-To integrate the CircuitBreaker with an existing DeFi protocol, follow these steps:
+Here is a brief overview of the primary functions:
 
-1. Deploy the CircuitBreaker contract, providing the required parameters: token address, delay period, release period, and liquidation resolver address.
-2. In the DeFi protocol smart contract, add a condition to check if the transfer amount is above the predefined threshold.
-3. If the transfer amount is above the threshold, call the `lockFunds` function of the CircuitBreaker contract to lock the funds temporarily.
-4. Users can call the `unlockFunds` function of the CircuitBreaker contract to gradually release their locked funds over time.
+transferTo(address recipient, uint256 amount): Transfers the specified amount of tokens to the recipient. If the amount is greater than or equal to the minimum lock amount, the funds will be locked and released over time.
 
-Before deploying the CircuitBreaker on the mainnet, make sure to conduct a thorough review, testing, and auditing of the contract.
+unlockFor(address recipient, uint256 lockTimestamp): Unlocks the funds for the specified recipient according to the release curve. This function can only be called by the recipient.
+
+getWithdrawableAmount(address recipient, uint256 lockTimestamp): Returns the amount of funds that can be withdrawn by the recipient at the current time.
 
 ## Repository Structure
 
-- `contracts/`: Contains the CircuitBreaker and ERC20Mock smart contracts.
+- `src/`: Contains the CircuitBreaker and ERC20Mock smart contracts.
 - `test/`: Contains the test suites for the CircuitBreaker contract, written for Hardhat and Dapp Foundry frameworks.
 
 
