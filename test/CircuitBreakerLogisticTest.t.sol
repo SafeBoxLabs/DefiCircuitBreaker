@@ -80,4 +80,52 @@ contract CircuitBreakerLogisticTest is Test {
         circuitBreakerLogistic.unlockFor(address(this), lockTimestamp);
     }
 
+    function testTransferNoLock2() public {
+        uint256 amount2 = 2e18;
+        IERC20(circuitBreakerLogistic.underlyingToken()).transfer(address(circuitBreakerLogistic), amount2);
+
+        vm.recordLogs();
+        circuitBreakerLogistic.transferTo(address(this), amount2);
+        Vm.Log[] memory entries = vm.getRecordedLogs();
+        assertEq(entries.length, 2);
+        assertEq(
+            entries[1].topics[0],
+            keccak256("TransferFulfilled(address,uint256,uint256)")
+        );
+        assertEq(
+            uint256(entries[1].topics[1]),
+            uint256(uint160(address(this)))
+        );
+
+        (uint256 withdrawnAmount, uint256 remainingAmount) = abi.decode(
+            entries[1].data,
+            (uint256, uint256)
+        );
+        assertEq(withdrawnAmount, amount2);
+        assertEq(remainingAmount, uint256(0));
+
+        uint256 amount = 1e18;
+        IERC20(circuitBreakerLogistic.underlyingToken()).transfer(address(circuitBreakerLogistic), amount);
+
+        vm.recordLogs();
+
+        circuitBreakerLogistic.transferTo(address(this), amount);
+        entries = vm.getRecordedLogs();
+        assertEq(entries.length, 2);
+        assertEq(
+            entries[1].topics[0],
+            keccak256("TransferFulfilled(address,uint256,uint256)")
+        );
+        assertEq(
+            uint256(entries[1].topics[1]),
+            uint256(uint160(address(this)))
+        );
+
+        (withdrawnAmount, remainingAmount) = abi.decode(
+            entries[1].data,
+            (uint256, uint256)
+        );
+        assertEq(withdrawnAmount, amount);
+        assertEq(remainingAmount, uint256(0));
+    }
 }
